@@ -234,16 +234,19 @@ mc_backupmap() {
   as_user "cd $MCPATH && rsync -cghLoprtu "$WORLDNAME" "$BACKUPPATH""
   sleep 10
   echo " * Creating compressed backup..."
-  NOW="`date "+%Y-%m-%d.%H-%M-%S"`"
+  NOW="`date "+%Y%m%d.%H%M%S"`"
   # Create a compressed backup file and background it so we can get back to restarting the server
   # You can tell when the compression is done as it makes an md5sum file of the backup
-  as_user "cd $BACKUPPATH && tar cfz "$WORLDNAME"_backup_"$NOW".tar.gz "$WORLDNAME" && md5sum "$WORLDNAME"_backup_"$NOW".tar.gz > "$WORLDNAME"_backup_"$NOW".tar.gz.md5 &" # we can background this and get to restarting the server
+  as_user "cd $BACKUPPATH && tar cfz "$WORLDNAME"."$NOW".tar.gz "$WORLDNAME" && md5sum "$WORLDNAME"."$NOW".tar.gz > "$WORLDNAME"."$NOW".tar.gz.md5 &" # we can background this and get to restarting the server
   success && echo " * Backed up map."
 }
 
 ## Backs up executable by copying it to backup location
 
 mc_backupexe() {
+  # we don't want to back up the jar...
+  return
+
   echo " * Backing up the $SERVERNAME server executable..."
   as_user "cd $MCPATH && cp "$SERVICE" "$BACKUPPATH"/"$SERVICE"_backup_"$NOW".jar"
   success && echo " * Backed up executable."
