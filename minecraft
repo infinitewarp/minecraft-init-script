@@ -138,6 +138,23 @@ mc_stop() {
   fi
 }
 
+## Passes input command to Minecraft
+
+mc_command() {
+  if [ "$1" ]
+  then
+    if ps ax | grep -v grep | grep -v -i SCREEN | grep $SERVICE > /dev/null
+    then
+      echo " * $SERVERNAME is running. Executing command \"$1\"..."
+      as_user "screen -p 0 -S $SESSION -X eval 'stuff \"$1\"\015'"
+    else
+      failure && echo " * $SERVERNAME was not running. Not executing command."
+      exit 1;
+    fi
+  else
+    echo "Must specify server command"
+  fi
+}
 
 ## Set the server read-only, save the map, and have Linux sync filesystem buffers to disk
 
@@ -358,6 +375,9 @@ case "$1" in
  mc_stop
  sleep 1;
  mc_start
+ ;;
+  command)
+ mc_command "$2"
  ;;
   update)
  mc_updatecheck
