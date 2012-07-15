@@ -1,6 +1,6 @@
 #!/bin/bash
 # /etc/init.d/minecraft
-# version 2012-05-26 (YYYY-MM-DD)
+# version 2012-07-14 (YYYY-MM-DD)
 
 ### BEGIN INIT INFO
 # Provides: minecraft
@@ -50,7 +50,8 @@ CPU_COUNT=2
 BACKUPPATH="/opt/minecraft/backups"
 # Find the world name from the existing server file
 WORLDNAME=`cat $MCPATH/server.properties | grep -E 'level-name' | sed -e s/.*level-name=//`
-
+# Amount of memory to be allocated to the game
+MEMORY="2G"
 
 ## The Java command to run the server
 
@@ -58,7 +59,7 @@ WORLDNAME=`cat $MCPATH/server.properties | grep -E 'level-name' | sed -e s/.*lev
 # INVOCATION="java -Xms3072M -Xmx3072M -Djava.net.preferIPv4Stack=true -jar $SERVICE nogui"
 
 # Tested fastest. Default parallel new gen collector, plus parallel old gen collector.
-INVOCATION="java -Xms3072M -Xmx3072M -Djava.net.preferIPv4Stack=true -XX:MaxPermSize=128M -XX:UseSSE=2 -XX:-DisableExplicitGC -XX:+UseParallelOldGC -XX:ParallelGCThreads=$CPU_COUNT -XX:+UseLargePages -jar $SERVICE nogui"
+INVOCATION="java -Xms$MEMORY -Xmx$MEMORY -Djava.net.preferIPv4Stack=true -XX:MaxPermSize=128M -XX:UseSSE=2 -XX:-DisableExplicitGC -XX:+UseParallelOldGC -XX:ParallelGCThreads=$CPU_COUNT -XX:+UseLargePages -jar $SERVICE nogui"
 
 # removed "performance" commands
 # -XX:+UseFastAccessorMethods -XX:+AggressiveOpts -XX:+UseAdaptiveGCBoundary
