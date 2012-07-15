@@ -35,19 +35,19 @@
 
 ## Settings
 # Nice looking name of service for script to report back to users
-SERVERNAME="CraftBukkit"
+SERVERNAME="Minecraft"
 # Filename of server binary
-SERVICE="craftbukkit.jar"
+SERVICE="minecraft_server.jar"
 # URL of server executable for update checking
 SERVER_URL=http://cbukk.it/craftbukkit.jar
 # Username of non-root user who will run the server
-USERNAME="bukkit"
+USERNAME="bsmith"
 # Path of server binary and world
-MCPATH="/home/bukkit/craftbukkit"
+MCPATH="/opt/minecraft/current"
 # Number of CPU cores to thread across if using multithreaded garbage collection
 CPU_COUNT=2
 # Where backups go
-BACKUPPATH="/home/bukkit/backups"
+BACKUPPATH="/opt/minecraft/backups"
 # Find the world name from the existing server file
 WORLDNAME=`cat $MCPATH/server.properties | grep -E 'level-name' | sed -e s/.*level-name=//`
 
@@ -175,6 +175,9 @@ mc_saveon() {
 ## http://cbukk.it/craftbukkit.jar is the recommended build URL
 
 mc_updatecheck() {
+  echo " * Updating is disabled."
+  exit 1
+
   echo " * Downloading latest $SERVERNAME executable..."
   as_user "cd $MCPATH && curl -# -L -o $MCPATH/$SERVICE.update \""$SERVER_URL"\""
 
@@ -206,6 +209,9 @@ mc_updatecheck() {
 ## Actually do the executable update
 
 mc_updatedo() {
+  echo " * Updating is disabled."
+  exit 1
+
   if ps ax | grep -v grep | grep -v -i SCREEN | grep $SERVICE > /dev/null
   then
     PID="`ps ax | grep -v grep | grep -v -i SCREEN | grep $SERVICE | awk '{print $1}'`"
@@ -243,6 +249,9 @@ mc_backupexe() {
 ## Removes any backups older than 7 days, designed to be called by daily cron job
 
 mc_removeoldbackups() {
+  echo " * Backup removal is disabled."
+  exit 1
+
   NUMBEROFBACKUPS="`find \"$BACKUPPATH\" -name \""$WORLDNAME"_backup*\" -type f -mtime +7 | wc -l`"
   if [ $NUMBEROFBACKUPS -ge 1 ]
   then
