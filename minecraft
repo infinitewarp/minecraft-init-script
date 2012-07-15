@@ -249,7 +249,7 @@ mc_backupmap() {
   NOW="`date "+%Y%m%d.%H%M%S"`"
   # Create a compressed backup file and background it so we can get back to restarting the server
   # You can tell when the compression is done as it makes an md5sum file of the backup
-  as_user "cd $BACKUPPATH && tar cfz "$WORLDNAME"."$NOW".tar.gz "$WORLDNAME" && md5sum "$WORLDNAME"."$NOW".tar.gz > "$WORLDNAME"."$NOW".tar.gz.md5 &" # we can background this and get to restarting the server
+  as_user "cd $BACKUPPATH && tar cfz "$WORLDNAME"."$NOW".tar.gz "$WORLDNAME" && ln -sf "$WORLDNAME"."$NOW".tar.gz "$WORLDNAME".tgz && md5sum "$WORLDNAME"."$NOW".tar.gz > "$WORLDNAME"."$NOW".tar.gz.md5 &" # we can background this and get to restarting the server
   success && echo " * Backed up map."
 }
 
