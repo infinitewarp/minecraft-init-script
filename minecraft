@@ -52,6 +52,8 @@ BACKUPPATH="/opt/minecraft/backups"
 WORLDNAME=`cat $MCPATH/server.properties | grep -E 'level-name' | sed -e s/.*level-name=//`
 # Amount of memory to be allocated to the game
 MEMORY="2G"
+# Named session for screen
+SESSION="minecraft"
 
 ## The Java command to run the server
 
@@ -91,7 +93,7 @@ mc_start() {
     echo " * $SERVERNAME was not already running. Starting..."
     echo " * Using map named \"$WORLDNAME\"..."
     cd $MCPATH
-    as_user "cd $MCPATH && screen -dmS minecraft $INVOCATION"
+    as_user "cd $MCPATH && screen -dmS $SESSION $INVOCATION"
     sleep 10
     echo " * Checking $SERVERNAME is running..."
 
@@ -115,12 +117,12 @@ mc_stop() {
     PID="`ps ax | grep -v grep | grep -v -i SCREEN | grep $SERVICE | awk '{print $1}'`"
     echo " * $SERVERNAME is running (pid $PID). Commencing shutdown..."
     echo " * Notifying users of shutdown..."
-    as_user "screen -p 0 -S minecraft -X eval 'stuff \"say SERVER SHUTTING DOWN IN 10 SECONDS. Saving map...\"\015'"
+    as_user "screen -p 0 -S $SESSION -X eval 'stuff \"say SERVER SHUTTING DOWN IN 10 SECONDS. Saving map...\"\015'"
     echo " * Saving map named \"$WORLDNAME\" to disk..."
-    as_user "screen -p 0 -S minecraft -X eval 'stuff \"save-all\"\015'"
+    as_user "screen -p 0 -S $SESSION -X eval 'stuff \"save-all\"\015'"
     sleep 10
     echo " * Stopping $SERVERNAME..."
-    as_user "screen -p 0 -S minecraft -X eval 'stuff \"stop\"\015'"
+    as_user "screen -p 0 -S $SESSION -X eval 'stuff \"stop\"\015'"
     sleep 10
   else
     failure && echo " * $SERVERNAME was not running!"
@@ -144,11 +146,11 @@ mc_saveoff() {
   then
     echo " * $SERVERNAME is running. Commencing save..."
     echo " * Notifying users of save..."
-    as_user "screen -p 0 -S minecraft -X eval 'stuff \"say SERVER BACKUP STARTING. Server going read-only...\"\015'"
+    as_user "screen -p 0 -S $SESSION -X eval 'stuff \"say SERVER BACKUP STARTING. Server going read-only...\"\015'"
     echo " * Setting server read-only..."
-    as_user "screen -p 0 -S minecraft -X eval 'stuff \"save-off\"\015'"
+    as_user "screen -p 0 -S $SESSION -X eval 'stuff \"save-off\"\015'"
     echo " * Saving map named \"$WORLDNAME\" to disk..."
-    as_user "screen -p 0 -S minecraft -X eval 'stuff \"save-all\"\015'"
+    as_user "screen -p 0 -S $SESSION -X eval 'stuff \"save-all\"\015'"
     sync
     sleep 10
     success && echo " * Map saved."
@@ -164,8 +166,8 @@ mc_saveon() {
   if ps ax | grep -v grep | grep -v -i SCREEN | grep $SERVICE > /dev/null
   then
     echo " * $SERVERNAME is running. Re-enabling saves..."
-    as_user "screen -p 0 -S minecraft -X eval 'stuff \"say SERVER BACKUP ENDED. Server going read-write...\"\015'"
-    as_user "screen -p 0 -S minecraft -X eval 'stuff \"save-on\"\015'"
+    as_user "screen -p 0 -S $SESSION -X eval 'stuff \"say SERVER BACKUP ENDED. Server going read-write...\"\015'"
+    as_user "screen -p 0 -S $SESSION -X eval 'stuff \"save-on\"\015'"
   else
     failure && echo " * $SERVERNAME was not running. Not resuming saves."
     exit 1;
